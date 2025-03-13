@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -142,26 +141,26 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-white">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
-        <div className="container-pad py-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="container-pad py-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900">Profile Settings</h1>
-          <p className="text-gray-600">Manage your account details and preferences</p>
+          <p className="text-gray-600 mt-1">Manage your account details and preferences</p>
         </div>
       </header>
       
       <main className="container-pad py-8">
         <div className="grid gap-8 md:grid-cols-3">
           {/* Profile Card */}
-          <div className="card flex flex-col items-center p-6">
-            <div className="relative mb-4">
+          <div className="card flex flex-col items-center p-6 bg-white rounded-xl shadow-md border border-gray-100">
+            <div className="relative mb-6">
               {avatarUrl ? (
                 <img 
                   src={avatarUrl} 
@@ -176,7 +175,7 @@ const Profile = () => {
               
               <label 
                 htmlFor="avatar-upload" 
-                className="absolute bottom-0 right-0 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-primary-hover"
+                className="absolute bottom-0 right-0 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-primary-hover transition-colors shadow-lg"
               >
                 <Upload className="h-5 w-5" />
                 <input 
@@ -189,34 +188,34 @@ const Profile = () => {
               </label>
             </div>
             
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-semibold text-gray-800">
               {profile?.full_name || `Student ${profile?.student_id}`}
             </h2>
-            <p className="text-gray-600">{profile?.student_id}@mytudublin.ie</p>
+            <p className="text-gray-600 mt-1">{profile?.student_id}@mytudublin.ie</p>
             
             <div className="mt-6 w-full space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Department:</span>
-                <span className="font-medium">{profile?.department}</span>
+                <span className="font-medium text-gray-700">{profile?.department}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Year:</span>
-                <span className="font-medium">{profile?.academic_year}</span>
+                <span className="font-medium text-gray-700">{profile?.academic_year}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Group:</span>
-                <span className="font-medium">{profile?.module_group}</span>
+                <span className="font-medium text-gray-700">{profile?.module_group}</span>
               </div>
             </div>
           </div>
           
           {/* Edit Form */}
-          <div className="card md:col-span-2 p-6">
-            <h2 className="mb-4 text-xl font-semibold">Edit Profile</h2>
+          <div className="card md:col-span-2 p-6 bg-white rounded-xl shadow-md border border-gray-100">
+            <h2 className="mb-6 text-2xl font-semibold text-gray-800">Edit Profile</h2>
             
             {error && (
-              <div className="mb-4 rounded-md bg-red-50 p-4">
-                <div className="flex">
+              <div className="mb-6 rounded-md bg-red-50 p-4 border border-red-200">
+                <div className="flex items-center">
                   <AlertCircle className="h-5 w-5 text-red-400" />
                   <p className="ml-3 text-sm text-red-700">{error}</p>
                 </div>
@@ -224,7 +223,7 @@ const Profile = () => {
             )}
             
             <form onSubmit={updateProfile}>
-              <div className="mb-4">
+              <div className="mb-6">
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
                   Full Name
                 </label>
@@ -233,12 +232,12 @@ const Profile = () => {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="input-field mt-1"
+                  className="input-field mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                   placeholder="Your full name"
                 />
               </div>
               
-              <div className="mb-4">
+              <div className="mb-6">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
                 </label>
@@ -246,7 +245,7 @@ const Profile = () => {
                   id="email"
                   type="email"
                   value={`${profile?.student_id}@mytudublin.ie`}
-                  className="input-field mt-1 bg-gray-50"
+                  className="input-field mt-1 block w-full rounded-md border-gray-300 bg-gray-50 cursor-not-allowed"
                   disabled
                 />
                 <p className="mt-1 text-xs text-gray-500">
@@ -256,17 +255,17 @@ const Profile = () => {
               
               <button
                 type="submit"
-                className="button-primary mt-2 flex items-center"
+                className="button-primary mt-4 flex items-center justify-center gap-2 rounded-md px-6 py-3 bg-primary text-white hover:bg-primary-hover transition-colors"
                 disabled={updating}
               >
                 {updating ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Saving...
                   </>
                 ) : (
                   <>
-                    <Save className="mr-2 h-4 w-4" />
+                    <Save className="mr-2 h-5 w-5" />
                     Save Changes
                   </>
                 )}
