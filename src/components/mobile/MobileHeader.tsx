@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ChevronLeft, Bell, User, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -19,21 +18,15 @@ const MobileHeader = ({ title, showBackButton = false }: MobileHeaderProps) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
+  // Hide or show header based on scroll direction
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // Show header if scrolling up or at the top
-      if (currentScrollY <= 0) {
-        setVisible(true);
-      } else if (currentScrollY < lastScrollY) {
-        // Scrolling up
+      if (currentScrollY <= 0 || currentScrollY < lastScrollY) {
         setVisible(true);
       } else if (currentScrollY > lastScrollY) {
-        // Scrolling down
         setVisible(false);
       }
-      
       setLastScrollY(currentScrollY);
     };
 
@@ -41,23 +34,23 @@ const MobileHeader = ({ title, showBackButton = false }: MobileHeaderProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  // Fetch user profile from Supabase
   useEffect(() => {
     const getProfile = async () => {
       if (user) {
         const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
           .single();
-        
+
         if (profileData) {
           setProfile(profileData);
-          
+
           if (profileData.avatar_url) {
             const { data: avatarData } = await supabase.storage
-              .from('avatars')
+              .from("avatars")
               .getPublicUrl(profileData.avatar_url);
-            
             setAvatarUrl(avatarData.publicUrl);
           }
         }
@@ -68,7 +61,7 @@ const MobileHeader = ({ title, showBackButton = false }: MobileHeaderProps) => {
   }, [user]);
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev);
   };
 
   const handleGoBack = () => {
@@ -81,110 +74,121 @@ const MobileHeader = ({ title, showBackButton = false }: MobileHeaderProps) => {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-40 bg-white transition-transform duration-300 ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
-      <div className="flex flex-col bg-white">
-        {/* Top navigation area */}
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 transition-transform duration-300 ${
+        visible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
+      {/* Header with a sleek dark background */}
+      <div className="flex flex-col bg-gray-800 shadow-lg">
+        {/* Top Navigation */}
         <div className="flex items-center justify-between px-4 h-16">
-          <div className="flex items-center">
-            {showBackButton ? (
+          <div className="flex items-center space-x-2">
+            {showBackButton && (
               <button
                 onClick={handleGoBack}
-                className="p-2 -ml-2 rounded-full hover:bg-gray-100"
+                className="p-2 rounded-full hover:bg-gray-700 transition-colors"
               >
-                <ChevronLeft className="w-6 h-6 text-gray-700" />
+                <ChevronLeft className="w-6 h-6 text-white" />
               </button>
-            ) : (
-              <h1 className="text-lg font-semibold">{title || "StudyBuddy"}</h1>
             )}
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <button 
-              onClick={toggleMenu}
-              className="p-2 rounded-full hover:bg-gray-100"
+            <button
+              onClick={() => navigate("/")}
+              className="text-white text-xl font-bold"
             >
-              <MoreVertical className="w-5 h-5 text-gray-700" />
+              Course Connect
             </button>
-            <button className="p-2 rounded-full hover:bg-gray-100">
-              <Bell className="w-5 h-5 text-gray-700" />
+          </div>
+
+          {/* Right: Icons only */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleMenu}
+              className="p-2 rounded-full hover:bg-gray-700 transition-colors"
+            >
+              <MoreVertical className="w-5 h-5 text-white" />
+            </button>
+            <button className="p-2 rounded-full hover:bg-gray-700 transition-colors">
+              <Bell className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
 
-        {/* User profile hero section */}
+        {/* User Profile Section */}
         {!showBackButton && (
           <div className="px-4 pb-6">
             <div className="flex items-center space-x-4">
               {avatarUrl ? (
-                <img 
-                  src={avatarUrl} 
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full object-cover border-2 border-primary/10"
-                  onClick={() => navigate('/profile')}
+                <img
+                  src={avatarUrl}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-gray-700 cursor-pointer"
+                  onClick={() => navigate("/profile")}
                 />
               ) : (
-                <div 
-                  className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center cursor-pointer"
-                  onClick={() => navigate('/profile')}
+                <div
+                  className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center cursor-pointer"
+                  onClick={() => navigate("/profile")}
                 >
-                  <User className="w-5 h-5 text-primary" />
+                  <User className="w-6 h-6 text-gray-300" />
                 </div>
               )}
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Welcome, {profile?.full_name || profile?.student_id || 'Student'}
+                <h2 className="text-xl font-semibold text-white">
+                  Welcome, {profile?.full_name || profile?.student_id || "Student"}
                 </h2>
-                <p className="text-sm text-gray-600">
-                  {profile?.department ? `${profile.department} • Year ${profile?.academic_year || '1'} • Group ${profile?.module_group || 'A'}` : 'Your academic companion'}
+                <p className="text-sm text-gray-400">
+                  {profile?.department
+                    ? `${profile.department} • Year ${profile?.academic_year || "1"} • Group ${profile?.module_group || "A"}`
+                    : "Your academic companion"}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Very subtle divider */}
-        <div className="h-[1px] bg-gray-100"></div>
+        {/* Divider */}
+        <div className="h-[1px] bg-gray-700" />
       </div>
 
-      {/* Simple popup menu instead of full sidebar */}
+      {/* Popup Menu */}
       {menuOpen && (
-        <div className="absolute right-3 top-16 z-50 w-48 py-2 bg-white rounded-md shadow-lg border border-gray-100">
-          <button 
-            onClick={() => {
-              navigate('/settings');
-              setMenuOpen(false);
-            }}
-            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-          >
-            Settings
-          </button>
-          <button 
-            onClick={() => {
-              navigate('/favorites');
-              setMenuOpen(false);
-            }}
-            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-          >
-            Favorites
-          </button>
-          <button 
-            onClick={() => {
-              handleSignOut();
-              setMenuOpen(false);
-            }}
-            className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
-          >
-            Sign Out
-          </button>
-        </div>
-      )}
-
-      {/* Overlay to close menu when clicking outside */}
-      {menuOpen && (
-        <div 
-          className="fixed inset-0 z-30" 
-          onClick={() => setMenuOpen(false)}
-        ></div>
+        <>
+          <div className="absolute right-3 top-16 z-50 w-48 py-2 bg-white rounded-md shadow-xl border border-gray-200">
+            <button
+              onClick={() => {
+                navigate("/settings");
+                setMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              Settings
+            </button>
+            <button
+              onClick={() => {
+                navigate("/favorites");
+                setMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              Favorites
+            </button>
+            <button
+              onClick={() => {
+                handleSignOut();
+                setMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-600 transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
+          {/* Overlay to close menu when clicking outside */}
+          <div
+            className="fixed inset-0 z-30"
+            onClick={() => setMenuOpen(false)}
+          ></div>
+        </>
       )}
     </header>
   );
