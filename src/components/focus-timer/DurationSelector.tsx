@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface DurationSelectorProps {
@@ -8,6 +7,7 @@ interface DurationSelectorProps {
 
 const DurationSelector: React.FC<DurationSelectorProps> = ({ disabled, onSelectDuration }) => {
   const durations = [
+    { label: '30 sec', value: 0.5 },
     { label: '5 min', value: 5 },
     { label: '25 min', value: 25 },
     { label: '45 min', value: 45 },
